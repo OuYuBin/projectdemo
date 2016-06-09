@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans>
+<bean id="c" class="beanfactory.Car"></bean>
+<bean id="p" class="beanfactory.Plane"></bean>
+</beans>

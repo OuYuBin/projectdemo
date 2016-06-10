@@ -11,6 +11,9 @@ import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
+import java.util.regex.MatchResult;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.mail.Address;
 import javax.mail.BodyPart;
@@ -89,9 +92,10 @@ public class POP3ReceiveMailTest {
 	 * 
 	 * @param messages
 	 *            要解析的邮件列表
+	 * @throws InterruptedException 
 	 */
 	public static void parseMessage(Message... messages)
-			throws MessagingException, IOException {
+			throws MessagingException, IOException, InterruptedException {
 		if (messages == null || messages.length < 1)
 			throw new MessagingException("未找到要解析的邮件!");
 
@@ -120,9 +124,9 @@ public class POP3ReceiveMailTest {
 			getMailTextContent(msg, content);
 			// System.out.println("邮件正文：" + (content.length() > 100 ?
 			// content.substring(0,100) + "..." : content));
-			//System.out.println("邮件正文：" + content);
-			
-		    parseContent(content);
+			// System.out.println("邮件正文：" + content);
+
+			parseContent(content);
 			System.out.println("------------------第" + msg.getMessageNumber()
 					+ "封邮件解析结束-------------------- ");
 			System.out.println();
@@ -134,18 +138,46 @@ public class POP3ReceiveMailTest {
 	 * 
 	 * @param content
 	 *            要解析的邮件正文
+	 * @throws InterruptedException 
 	 */
-	public static void parseContent(StringBuffer content) {
+	public static void parseContent(StringBuffer content) throws InterruptedException {
 		// System.err.println("==============================================================================");
 		Document document = Jsoup.parse(content.toString());
+
+		// System.out.println("Document"+document);
+		Elements div = document.select("div.Section1");
+		// String ss =
+		// "联系电话： 18655417685性别： 女电子邮件： 18655417685@163.com年龄： 27国籍： 中国教育程度： 本科户籍： ";
+		String ss = null;
+		for (Element e : div) {
+			ss = e.select("p.MsoNormal").select("span").text(); // 读取span标签。text()
+		}
+		System.out.println("OLD:" + ss);
+		System.out.println("NEW:" + ss.replace(" ", ""));
+		System.out.println(regex("(?<=姓 名：).+?(?=工作年限)", ss).trim());
+		System.out.println(regex("(?<=简历编号：).+?(?=最新登录)", ss.replace(" ", "")).trim());
+		System.out.println(regex("(?<=教育程度：).+?(?=户籍)", ss.replace(" ", "")).trim());
 		
-		//System.out.println("Document"+document);
-		Elements div = document.select("div.Section1");  
-        for (Element e : div) {  
-            String ss = e.select("p.MsoNormal").select("span").text();  //读取span标签。text()            
-            System.out.println("==========================================="+ss); 
-                 
-        }  
+		System.out.println(regex("(?<=电话：).+?(?=性别)", ss.replace(" ", "")).trim());
+		System.out.println(regex("(?<=年龄：).+?(?=国籍)", ss.replace(" ", "")).trim());
+		System.out.println(regex("(?<=性别：).+?(?=电子邮件)", ss.replace(" ", "")).trim());
+		System.out.println(regex("(?<=来自).+?(?=的候选人)", ss.replace(" ", "")).trim());
+		/*
+		 * Pattern pattern = Pattern.compile("(?<=姓 名：).+?(?=工作年限)"); Matcher mr
+		 * = pattern.matcher(ss); while (mr.find()) { System.out.println("姓名:" +
+		 * mr.group().trim()); }
+		 */
+	}
+
+	public static String regex(String patternString, String res) {
+		Pattern pattern = Pattern.compile(patternString);
+		Matcher mr = pattern.matcher(res);
+		String result = "";
+		while (mr.find()) {
+			//System.out.println(mr.find());
+			result = mr.group().trim();
+		}
+		return result;
 	}
 
 	/**
@@ -245,7 +277,7 @@ public class POP3ReceiveMailTest {
 			return "";
 
 		if (pattern == null || "".equals(pattern))
-			pattern = "yyyy年MM月dd日 E HH:mm ";
+			pattern = "yyyy-MM-dd HH:mm:ss ";
 
 		return new SimpleDateFormat(pattern).format(receivedDate);
 	}

@@ -79,7 +79,7 @@ public class POP3ReceiveMailTest {
 		// 获得收件箱中的邮件总数
 		System.out.println("邮件总数: " + folder.getMessageCount());
 		// Message[] messages = folder.getMessages();
-		Message[] messages = folder.getMessages(35, 35);
+		Message[] messages = folder.getMessages(70,70);
 		parseMessage(messages);
 
 		// 释放资源
@@ -143,23 +143,34 @@ public class POP3ReceiveMailTest {
 	public static void parseContent(StringBuffer content) throws InterruptedException {
 		// System.err.println("==============================================================================");
 		Document document = Jsoup.parse(content.toString());
-
-		// System.out.println("Document"+document);
-		Elements div = document.select("div.Section1");
+		//System.out.println("Document"+document);
+		/*System.out.println("Document"+document);
+		Elements div = document.select("div");
 		// String ss =
 		// "联系电话： 18655417685性别： 女电子邮件： 18655417685@163.com年龄： 27国籍： 中国教育程度： 本科户籍： ";
 		String ss = null;
 		for (Element e : div) {
 			ss = e.select("p.MsoNormal").select("span").text(); // 读取span标签。text()
+			
+		}*/
+		//System.out.println("Document"+document);
+		Elements div = document.getElementsByTag("span");
+		// String ss =
+		// "联系电话： 18655417685性别： 女电子邮件： 18655417685@163.com年龄： 27国籍： 中国教育程度： 本科户籍： ";
+		String ss = "";
+		for (Element e : div) {
+			//ss = e.select("p.MsoNormal").select("span").text(); // 读取span标签。text()
+			ss+=e.text();
+			//System.out.println("============>"+ss);
 		}
-		System.out.println("OLD:" + ss);
+		//System.out.println("OLD:" + ss);
 		System.out.println("NEW:" + ss.replace(" ", ""));
 		System.out.println(regex("(?<=姓 名：).+?(?=工作年限)", ss).trim());
 		System.out.println(regex("(?<=简历编号：).+?(?=最新登录)", ss.replace(" ", "")).trim());
-		System.out.println(regex("(?<=教育程度：).+?(?=户籍)", ss.replace(" ", "")).trim());
+		System.out.println(regex("(?<=学　历：).+?(?=专　业)", ss.replace(" ", "")).trim());
 		
-		System.out.println(regex("(?<=电话：).+?(?=性别)", ss.replace(" ", "")).trim());
-		System.out.println(regex("(?<=年龄：).+?(?=国籍)", ss.replace(" ", "")).trim());
+		System.out.println(regex("(?<=电　话：).+?(?=（手机）)", ss.replace(" ", "")).trim());
+		System.out.println("age--->"+regex("(?<=收件人:).+?(?=岁岁)", ss.replace(" ", "")).trim());
 		System.out.println(regex("(?<=性别：).+?(?=电子邮件)", ss.replace(" ", "")).trim());
 		System.out.println(regex("(?<=来自).+?(?=的候选人)", ss.replace(" ", "")).trim());
 		/*

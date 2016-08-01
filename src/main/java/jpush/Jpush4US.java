@@ -19,13 +19,27 @@ public class Jpush4US {
 	private static final String appKey = "5194c89ed1587817671e3a81";
 	private static final String masterSecret = "c539ae2fb9bf518d09a98cd9";
 
-	private JPushClient jpushClient;
+	/*
+	 * private JPushClient jpushClient;
+	 * 
+	 * public JPushClient getInstence() { if (jpushClient == null) { jpushClient
+	 * = new JPushClient(masterSecret, appKey); } return jpushClient; }
+	 */
 
-	public JPushClient getInstence() {
-		if (jpushClient == null) {
-			jpushClient = new JPushClient(masterSecret, appKey);
+	private ThreadLocal<JPushClient> jpushClientLocal = new ThreadLocal<JPushClient>() {
+		@Override
+		protected JPushClient initialValue() {
+			JPushClient jPushClient = new JPushClient(masterSecret, appKey);
+			return jPushClient;
 		}
-		return jpushClient;
+	};
+
+	private JPushClient getInstence() {
+		return jpushClientLocal.get();
+	}
+
+	private void setInstence(JPushClient jpushClient) {
+		jpushClientLocal.set(jpushClient);
 	}
 
 	/**

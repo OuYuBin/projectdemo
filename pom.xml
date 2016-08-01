@@ -178,6 +178,19 @@
 			<version>1.5.4</version>
 			<scope>test</scope>
 		</dependency>
+		<!-- BASE64 -->
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>1.10</version>
+		</dependency>
+
+		<!-- Jpinyin -->
+		<dependency>
+			<groupId>com.github.stuxuhai</groupId>
+			<artifactId>jpinyin</artifactId>
+			<version>1.0</version>
+		</dependency>
 
 		<!-- Compiling the EWS Java API -->
 		<dependency>

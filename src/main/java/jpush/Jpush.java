@@ -99,7 +99,8 @@ public class Jpush {
 								.build())
 				.setOptions(
 						Options.newBuilder().setTimeToLive(86400)
-								.setApnsProduction(true).build()).build();
+								.setBigPushDuration(5).setApnsProduction(true)
+								.build()).build();
 	}
 
 	public static boolean pushMessage(PushMessageRequest request)

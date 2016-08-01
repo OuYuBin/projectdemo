@@ -1,21 +1,20 @@
 package httpclientlogin;
 
+import httpclientlogin.jushdto.MessageDto;
+import httpclientlogin.jushdto.NotificationDto;
+import httpclientlogin.jushdto.OptionsDto;
+import httpclientlogin.jushdto.PushDto;
+import httpclientlogin.jushdto.ScheduleDto;
+import httpclientlogin.jushdto.SingleDto;
+import httpclientlogin.jushdto.TriggerDto;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-
-import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.protocol.Protocol;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -36,6 +35,8 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 import org.junit.Test;
+
+import cn.jpush.api.utils.Base64;
 
 import com.alibaba.fastjson.JSON;
 
@@ -116,22 +117,28 @@ public class HttpClientLoginTest {
 		HttpClient httpclient = new DefaultHttpClient();
 
 		// HttpPost httpPost = new
-		//HttpPost httpPost = new HttpPost("http://sws.hengtiansoft.com/sws/web/auth/login/authc");///web/auth/login/authc
-		HttpPost httpPost = new HttpPost("http://sws.hengtiansoft.com/sws/web/auth/login/authc");// /web/auth/login/authc
-		//HttpPost httpPost = new HttpPost("https://passport.liepin.com/c/login.json");
-		//HttpPost httpPost = new HttpPost("https://mylogin.51job.com/40621842618756489796/my/My_Pmc.php");
-		
+		// HttpPost httpPost = new
+		// HttpPost("http://sws.hengtiansoft.com/sws/web/auth/login/authc");///web/auth/login/authc
+		HttpPost httpPost = new HttpPost(
+				"http://sws.hengtiansoft.com/sws/web/auth/login/authc");// /web/auth/login/authc
+		// HttpPost httpPost = new
+		// HttpPost("https://passport.liepin.com/c/login.json");
+		// HttpPost httpPost = new
+		// HttpPost("https://mylogin.51job.com/40621842618756489796/my/My_Pmc.php");
+
 		httpPost.addHeader(HTTP.CONTENT_TYPE, "application/json");
 
 		SignInDto signInDto = new SignInDto();
 		signInDto.setUserName("thinkgem");
 		signInDto.setPassword("admin");
 		signInDto.setRememberMe(false);
-		
-	/*	LiePinSignInDto liePinSignInDto=new LiePinSignInDto();
-		liePinSignInDto.setUserLogin("m15167101121@163.com");
-		liePinSignInDto.setUserPwd("131415926");
-		liePinSignInDto.setChkRememberPwd(false);*/
+
+		/*
+		 * LiePinSignInDto liePinSignInDto=new LiePinSignInDto();
+		 * liePinSignInDto.setUserLogin("m15167101121@163.com");
+		 * liePinSignInDto.setUserPwd("131415926");
+		 * liePinSignInDto.setChkRememberPwd(false);
+		 */
 
 		String jsonString = JSON.toJSONString(signInDto);
 		System.out.println("jsonString" + jsonString);
@@ -185,7 +192,7 @@ public class HttpClientLoginTest {
 
 		// 第三步：打开会员页面以判断登录成功（未登录用户是打不开会员页面的）
 		String memberpage = "http://sws.hengtiansoft.com/sws/web/index/tostation?stationId=1";
-		//String memberpage = "https://sns.liepin.com/main/";
+		// String memberpage = "https://sns.liepin.com/main/";
 		HttpGet httpget = new HttpGet(memberpage);
 		response = httpclient.execute(httpget);
 		entity = response.getEntity();
@@ -194,16 +201,17 @@ public class HttpClientLoginTest {
 
 		System.out.println(html);
 	}
-	
+
 	@Test
-	public void login2LiePin() throws ParseException, IOException{
+	public void login2LiePin() throws ParseException, IOException {
 		HttpClient httpclient = new DefaultHttpClient();
 
-		HttpPost httpPost = new HttpPost("https://passport.liepin.com/c/login.json");
-		
+		HttpPost httpPost = new HttpPost(
+				"https://passport.liepin.com/c/login.json");
+
 		httpPost.addHeader(HTTP.CONTENT_TYPE, "application/json");
 		httpPost.addHeader("x-requested-with", "XMLHttpRequest");
-		LiePinSignInDto liePinSignInDto=new LiePinSignInDto();
+		LiePinSignInDto liePinSignInDto = new LiePinSignInDto();
 		liePinSignInDto.setLayer_from("wwwindex_rightbox_new");
 		liePinSignInDto.setUser_login("15167101121");
 		liePinSignInDto.setUser_pwd("dcdab9faab89a3d04b6c9050aaafa10b");
@@ -260,7 +268,8 @@ public class HttpClientLoginTest {
 		httpPost.releaseConnection();
 
 		// 第三步：打开会员页面以判断登录成功（未登录用户是打不开会员页面的）
-		//String memberpage = "http://sws.hengtiansoft.com/sws/web/index/tostation?stationId=1";
+		// String memberpage =
+		// "http://sws.hengtiansoft.com/sws/web/index/tostation?stationId=1";
 		String memberpage = "https://sns.liepin.com/main/";
 		HttpGet httpget = new HttpGet(memberpage);
 		response = httpclient.execute(httpget);
@@ -268,165 +277,212 @@ public class HttpClientLoginTest {
 		String html = EntityUtils.toString(entity, "GBK");
 		httpget.releaseConnection();
 
-		//System.out.println(html);
+		// System.out.println(html);
 	}
-	
+
 	@Test
-	public void login2LiePinAgain() throws ParseException, IOException{
-		
-		HttpClient client = new DefaultHttpClient();                //构建一个Client
-		HttpPost post = new HttpPost("https://passport.liepin.com/c/login.json");    //构建一个POST请求
-	 //   post.addHeader("content-type", "application/x-www-form-urlencoded");
-	    post.addHeader("x-requested-with", "XMLHttpRequest");
-		//构建表单参数
-		List<NameValuePair> nvps = new ArrayList<NameValuePair>();  
-	    nvps.add(new BasicNameValuePair("layer_from", "wwwindex_rightbox_new"));  
-	    nvps.add(new BasicNameValuePair("user_login", "m15167101121@163.com"));  
-	    nvps.add(new BasicNameValuePair("user_pwd", "dcdab9faab89a3d04b6c9050aaafa10b"));  
-	    nvps.add(new BasicNameValuePair("chk_remember_pwd", ""));  
-	    /*nvps.add(new BasicNameValuePair("user_kind", "0"));  
-	    nvps.add(new BasicNameValuePair("isMd5", "1")); */ 
-		UrlEncodedFormEntity entity = new UrlEncodedFormEntity(nvps, "UTF-8");//将表单参数转化为“实体”
-		post.setEntity(entity); //将“实体“设置到POST请求里
-	    
-		HttpResponse response = client.execute(post);//提交POST请求
-		HttpEntity result = response.getEntity();//拿到返回的HttpResponse的"实体"
-		String content = EntityUtils.toString(result); //用httpcore.jar提供的工具类将"实体"转化为字符串打印到控制台
+	public void login2LiePinAgain() throws ParseException, IOException {
+
+		HttpClient client = new DefaultHttpClient(); // 构建一个Client
+		HttpPost post = new HttpPost("https://passport.liepin.com/c/login.json"); // 构建一个POST请求
+		// post.addHeader("content-type", "application/x-www-form-urlencoded");
+		post.addHeader("x-requested-with", "XMLHttpRequest");
+		// 构建表单参数
+		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+		nvps.add(new BasicNameValuePair("layer_from", "wwwindex_rightbox_new"));
+		nvps.add(new BasicNameValuePair("user_login", "m15167101121@163.com"));
+		nvps.add(new BasicNameValuePair("user_pwd",
+				"dcdab9faab89a3d04b6c9050aaafa10b"));
+		nvps.add(new BasicNameValuePair("chk_remember_pwd", ""));
+		/*
+		 * nvps.add(new BasicNameValuePair("user_kind", "0")); nvps.add(new
+		 * BasicNameValuePair("isMd5", "1"));
+		 */
+		UrlEncodedFormEntity entity = new UrlEncodedFormEntity(nvps, "UTF-8");// 将表单参数转化为“实体”
+		post.setEntity(entity); // 将“实体“设置到POST请求里
+
+		HttpResponse response = client.execute(post);// 提交POST请求
+		HttpEntity result = response.getEntity();// 拿到返回的HttpResponse的"实体"
+		String content = EntityUtils.toString(result); // 用httpcore.jar提供的工具类将"实体"转化为字符串打印到控制台
 		System.out.println(content);
-		
+
 		String memberpage = "https://c.liepin.com";
 		HttpGet httpget = new HttpGet(memberpage);
 		response = client.execute(httpget);
-		HttpEntity entitys =  response.getEntity();
+		HttpEntity entitys = response.getEntity();
 		String html = EntityUtils.toString(entitys, "GBK");
 		httpget.releaseConnection();
 
 		System.out.println(html);
-		
-		
+
 	}
+
 	@Test
-	public void login2Job51() throws ClientProtocolException, IOException{
-		HttpClient client = new DefaultHttpClient();                //构建一个Client
-		HttpPost post = new HttpPost("https://mylogin.51job.com/65119966868607969823/my/My_Pmc.php");    //构建一个POST请求
-		//构建表单参数
-		List<NameValuePair> nvps = new ArrayList<NameValuePair>();  
-	    //nvps.add(new BasicNameValuePair("layer_from", "wwwindex_rightbox_new"));  
-	    nvps.add(new BasicNameValuePair("username", "15167101121"));  
-	    nvps.add(new BasicNameValuePair("userpwd", "jia131415926"));  
-	    nvps.add(new BasicNameValuePair("login_verify", ""));  
-	    nvps.add(new BasicNameValuePair("url", ""));  
-	    nvps.add(new BasicNameValuePair("x", "56"));  
-	    nvps.add(new BasicNameValuePair("y", "21"));  
-		UrlEncodedFormEntity entity = new UrlEncodedFormEntity(nvps, "UTF-8");//将表单参数转化为“实体”
-		post.setEntity(entity); //将“实体“设置到POST请求里
-		            
-		HttpResponse response = client.execute(post);//提交POST请求
-		HttpEntity result = response.getEntity();//拿到返回的HttpResponse的"实体"
-		String content = EntityUtils.toString(result);; //用httpcore.jar提供的工具类将"实体"转化为字符串打印到控制台
+	public void login2Job51() throws ClientProtocolException, IOException {
+		HttpClient client = new DefaultHttpClient(); // 构建一个Client
+		HttpPost post = new HttpPost(
+				"https://mylogin.51job.com/65119966868607969823/my/My_Pmc.php"); // 构建一个POST请求
+		// 构建表单参数
+		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+		// nvps.add(new BasicNameValuePair("layer_from",
+		// "wwwindex_rightbox_new"));
+		nvps.add(new BasicNameValuePair("username", "15167101121"));
+		nvps.add(new BasicNameValuePair("userpwd", "jia131415926"));
+		nvps.add(new BasicNameValuePair("login_verify", ""));
+		nvps.add(new BasicNameValuePair("url", ""));
+		nvps.add(new BasicNameValuePair("x", "56"));
+		nvps.add(new BasicNameValuePair("y", "21"));
+		UrlEncodedFormEntity entity = new UrlEncodedFormEntity(nvps, "UTF-8");// 将表单参数转化为“实体”
+		post.setEntity(entity); // 将“实体“设置到POST请求里
+
+		HttpResponse response = client.execute(post);// 提交POST请求
+		HttpEntity result = response.getEntity();// 拿到返回的HttpResponse的"实体"
+		String content = EntityUtils.toString(result);
+		; // 用httpcore.jar提供的工具类将"实体"转化为字符串打印到控制台
 		System.out.println(content);
-		
+
 		String memberpage = "http://my.51job.com/my/113940355/My_Pmc.php";
 		HttpGet httpget = new HttpGet(memberpage);
 		response = client.execute(httpget);
-		HttpEntity entitys =  response.getEntity();
+		HttpEntity entitys = response.getEntity();
 		String html = EntityUtils.toString(entitys, "GBK");
 		httpget.releaseConnection();
 
 		System.out.println(html);
-		
+
 	}
-	
+
 	@Test
-	public void login2ZhiLian() throws ParseException, IOException{
-		//trustAllHosts();
-		HttpClient client = new DefaultHttpClient();                //构建一个Client
-		HttpPost post = new HttpPost("https://passport.zhaopin.com/account/login");    //构建一个POST请求
-		//构建表单参数
-		List<NameValuePair> nvps = new ArrayList<NameValuePair>();  
-	    //nvps.add(new BasicNameValuePair("layer_from", "wwwindex_rightbox_new"));  
-	    nvps.add(new BasicNameValuePair("LoginName", "15167101121"));  
-	    nvps.add(new BasicNameValuePair("Password", "jia131415926"));  
-	    nvps.add(new BasicNameValuePair("CheckCode", "2"));  
-	    nvps.add(new BasicNameValuePair("bkurl", ""));  
-	    nvps.add(new BasicNameValuePair("RemeberMe", "false"));  
-		UrlEncodedFormEntity entity = new UrlEncodedFormEntity(nvps, "UTF-8");//将表单参数转化为“实体”
-		post.setEntity(entity); //将“实体“设置到POST请求里
-		            
-		HttpResponse response = client.execute(post);//提交POST请求
-		HttpEntity result = response.getEntity();//拿到返回的HttpResponse的"实体"
-		String content = EntityUtils.toString(result);; //用httpcore.jar提供的工具类将"实体"转化为字符串打印到控制台
+	public void login2ZhiLian() throws ParseException, IOException {
+		// trustAllHosts();
+		HttpClient client = new DefaultHttpClient(); // 构建一个Client
+		HttpPost post = new HttpPost(
+				"https://passport.zhaopin.com/account/login"); // 构建一个POST请求
+		// 构建表单参数
+		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+		// nvps.add(new BasicNameValuePair("layer_from",
+		// "wwwindex_rightbox_new"));
+		nvps.add(new BasicNameValuePair("LoginName", "15167101121"));
+		nvps.add(new BasicNameValuePair("Password", "jia131415926"));
+		nvps.add(new BasicNameValuePair("CheckCode", "2"));
+		nvps.add(new BasicNameValuePair("bkurl", ""));
+		nvps.add(new BasicNameValuePair("RemeberMe", "false"));
+		UrlEncodedFormEntity entity = new UrlEncodedFormEntity(nvps, "UTF-8");// 将表单参数转化为“实体”
+		post.setEntity(entity); // 将“实体“设置到POST请求里
+
+		HttpResponse response = client.execute(post);// 提交POST请求
+		HttpEntity result = response.getEntity();// 拿到返回的HttpResponse的"实体"
+		String content = EntityUtils.toString(result);
+		; // 用httpcore.jar提供的工具类将"实体"转化为字符串打印到控制台
 		System.out.println(content);
-		
+
 		String memberpage = "http://i.zhaopin.com/resume/userinfo/add?type=0&iurl=&nname=";
 		HttpGet httpget = new HttpGet(memberpage);
 		response = client.execute(httpget);
-		HttpEntity entitys =  response.getEntity();
+		HttpEntity entitys = response.getEntity();
 		String html = EntityUtils.toString(entitys, "GBK");
 		httpget.releaseConnection();
 
 		System.out.println(html);
 	}
-	
-	@Test
-	public void login2ZhiLianAgain() throws ClientProtocolException, IOException {
-		    Protocol https = new Protocol("https", new HTTPSSecureProtocolSocketFactory(), 443);
-		    Protocol.registerProtocol("https", https);
-		    
-		    
-		    HttpClient client = new DefaultHttpClient();                //构建一个Client
-			HttpPost post = new HttpPost("https://passport.zhaopin.com/account/login");    //构建一个POST请求
-			//构建表单参数
-			List<NameValuePair> nvps = new ArrayList<NameValuePair>();  
-		    //nvps.add(new BasicNameValuePair("layer_from", "wwwindex_rightbox_new"));  
-		    nvps.add(new BasicNameValuePair("LoginName", "15167101121"));  
-		    nvps.add(new BasicNameValuePair("Password", "jia131415926"));  
-		    nvps.add(new BasicNameValuePair("CheckCode", "2"));  
-		    nvps.add(new BasicNameValuePair("bkurl", ""));  
-		    nvps.add(new BasicNameValuePair("RemeberMe", "false"));  
-			UrlEncodedFormEntity entity = new UrlEncodedFormEntity(nvps, "UTF-8");//将表单参数转化为“实体”
-			post.setEntity(entity); //将“实体“设置到POST请求里
-			            
-			HttpResponse response = client.execute(post);//提交POST请求
-			HttpEntity result = response.getEntity();//拿到返回的HttpResponse的"实体"
-			String content = EntityUtils.toString(result);; //用httpcore.jar提供的工具类将"实体"转化为字符串打印到控制台
-			System.out.println(content);
-			
-			String memberpage = "http://i.zhaopin.com/resume/userinfo/add?type=0&iurl=&nname=";
-			HttpGet httpget = new HttpGet(memberpage);
-			response = client.execute(httpget);
-			HttpEntity entitys =  response.getEntity();
-			String html = EntityUtils.toString(entitys, "GBK");
-			httpget.releaseConnection();
 
-			System.out.println(html);
-			Protocol.unregisterProtocol("https");
-		    
-		
+	@Test
+	public void login2ZhiLianAgain() throws ClientProtocolException,
+			IOException {
+		Protocol https = new Protocol("https",
+				new HTTPSSecureProtocolSocketFactory(), 443);
+		Protocol.registerProtocol("https", https);
+
+		HttpClient client = new DefaultHttpClient(); // 构建一个Client
+		HttpPost post = new HttpPost(
+				"https://passport.zhaopin.com/account/login"); // 构建一个POST请求
+		// 构建表单参数
+		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+		// nvps.add(new BasicNameValuePair("layer_from",
+		// "wwwindex_rightbox_new"));
+		nvps.add(new BasicNameValuePair("LoginName", "15167101121"));
+		nvps.add(new BasicNameValuePair("Password", "jia131415926"));
+		nvps.add(new BasicNameValuePair("CheckCode", "2"));
+		nvps.add(new BasicNameValuePair("bkurl", ""));
+		nvps.add(new BasicNameValuePair("RemeberMe", "false"));
+		UrlEncodedFormEntity entity = new UrlEncodedFormEntity(nvps, "UTF-8");// 将表单参数转化为“实体”
+		post.setEntity(entity); // 将“实体“设置到POST请求里
+
+		HttpResponse response = client.execute(post);// 提交POST请求
+		HttpEntity result = response.getEntity();// 拿到返回的HttpResponse的"实体"
+		String content = EntityUtils.toString(result);
+		; // 用httpcore.jar提供的工具类将"实体"转化为字符串打印到控制台
+		System.out.println(content);
+
+		String memberpage = "http://i.zhaopin.com/resume/userinfo/add?type=0&iurl=&nname=";
+		HttpGet httpget = new HttpGet(memberpage);
+		response = client.execute(httpget);
+		HttpEntity entitys = response.getEntity();
+		String html = EntityUtils.toString(entitys, "UTF-8");
+		httpget.releaseConnection();
+
+		System.out.println(html);
+		Protocol.unregisterProtocol("https");
 
 	}
 
+	@Test
+	public void jpush() throws ClientProtocolException, IOException {
+		HttpClient httpclient = new DefaultHttpClient();
+		HttpPost httpPost = new HttpPost("https://api.jpush.cn/v3/schedules");
+		httpPost.addHeader(HTTP.CONTENT_TYPE, "application/json");
+		httpPost.addHeader("Accept", "application/json");
+
+		String auth = "0eb9dbe6e06a61ba74509b00" + ":"
+				+ "025e2b9cb283f4c5356154a1";
+
+		String base64_auth = new String(Base64.encode(auth.getBytes()));
+		System.out.println("base64_auth:" + base64_auth);
+		httpPost.addHeader("Authorization", base64_auth);
+
+		// jpush参数
+		ScheduleDto schedule = new ScheduleDto();
+		schedule.setName("ScheduleTest");// 任务名(name)不可以有空格
+		// schedule.setName("&#23450;时推送示例");
+		schedule.setEnabled(true);
+		TriggerDto trigger = new TriggerDto();
+		SingleDto single = new SingleDto();
+		single.setTime("2016-08-01 13:46:00");
+		trigger.setSingle(single);
+		schedule.setTrigger(trigger);
+		PushDto push = new PushDto();
+		push.setPlatform("all");
+		push.setAudience("all");
+		NotificationDto notification = new NotificationDto();
+		notification.setAlert("5 minutes Schedule Test");
+		push.setNotification(notification);
+		MessageDto message = new MessageDto();
+		message.setMsg_content("TEST");
+		push.setMessage(message);
+		OptionsDto options = new OptionsDto();
+		options.setTime_to_live(30);
+		push.setOptions(options);
+		schedule.setPush(push);
+
+		String jsonString = JSON.toJSONString(schedule);
+		System.out.println("jsonString" + jsonString);
+
+		StringEntity se = new StringEntity(jsonString);
+		se.setContentType("text/json");
+		se.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,
+				"application/json"));
+
+		httpPost.setEntity(se);
+
+		HttpResponse response = httpclient.execute(httpPost);
+		HttpEntity entity = response.getEntity();
+
+		// 在这里可以用Jsoup之类的工具对返回结果进行分析，以判断登录是否成功
+		String postResult = EntityUtils.toString(entity, "GBK");
+
+		System.out
+				.println("=============================================================");
+		System.out.println(postResult);
+
+	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

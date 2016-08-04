@@ -213,8 +213,8 @@ public class HttpClientLoginTest {
 		httpPost.addHeader("x-requested-with", "XMLHttpRequest");
 		LiePinSignInDto liePinSignInDto = new LiePinSignInDto();
 		liePinSignInDto.setLayer_from("wwwindex_rightbox_new");
-		liePinSignInDto.setUser_login("15167101121");
-		liePinSignInDto.setUser_pwd("dcdab9faab89a3d04b6c9050aaafa10b");
+		liePinSignInDto.setUser_login("");
+		liePinSignInDto.setUser_pwd("");
 		liePinSignInDto.setChk_remember_pwd("");
 
 		String jsonString = JSON.toJSONString(liePinSignInDto);
@@ -290,7 +290,7 @@ public class HttpClientLoginTest {
 		// 构建表单参数
 		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
 		nvps.add(new BasicNameValuePair("layer_from", "wwwindex_rightbox_new"));
-		nvps.add(new BasicNameValuePair("user_login", "m15167101121@163.com"));
+		nvps.add(new BasicNameValuePair("user_login", "@163.com"));
 		nvps.add(new BasicNameValuePair("user_pwd",
 				"dcdab9faab89a3d04b6c9050aaafa10b"));
 		nvps.add(new BasicNameValuePair("chk_remember_pwd", ""));
@@ -326,8 +326,8 @@ public class HttpClientLoginTest {
 		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
 		// nvps.add(new BasicNameValuePair("layer_from",
 		// "wwwindex_rightbox_new"));
-		nvps.add(new BasicNameValuePair("username", "15167101121"));
-		nvps.add(new BasicNameValuePair("userpwd", "jia131415926"));
+		nvps.add(new BasicNameValuePair("username", ""));
+		nvps.add(new BasicNameValuePair("userpwd", ""));
 		nvps.add(new BasicNameValuePair("login_verify", ""));
 		nvps.add(new BasicNameValuePair("url", ""));
 		nvps.add(new BasicNameValuePair("x", "56"));
@@ -362,8 +362,8 @@ public class HttpClientLoginTest {
 		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
 		// nvps.add(new BasicNameValuePair("layer_from",
 		// "wwwindex_rightbox_new"));
-		nvps.add(new BasicNameValuePair("LoginName", "15167101121"));
-		nvps.add(new BasicNameValuePair("Password", "jia131415926"));
+		nvps.add(new BasicNameValuePair("LoginName", ""));
+		nvps.add(new BasicNameValuePair("Password", ""));
 		nvps.add(new BasicNameValuePair("CheckCode", "2"));
 		nvps.add(new BasicNameValuePair("bkurl", ""));
 		nvps.add(new BasicNameValuePair("RemeberMe", "false"));
@@ -400,8 +400,8 @@ public class HttpClientLoginTest {
 		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
 		// nvps.add(new BasicNameValuePair("layer_from",
 		// "wwwindex_rightbox_new"));
-		nvps.add(new BasicNameValuePair("LoginName", "15167101121"));
-		nvps.add(new BasicNameValuePair("Password", "jia131415926"));
+		nvps.add(new BasicNameValuePair("LoginName", ""));
+		nvps.add(new BasicNameValuePair("Password", ""));
 		nvps.add(new BasicNameValuePair("CheckCode", "2"));
 		nvps.add(new BasicNameValuePair("bkurl", ""));
 		nvps.add(new BasicNameValuePair("RemeberMe", "false"));

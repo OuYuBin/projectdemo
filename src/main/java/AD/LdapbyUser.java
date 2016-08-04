@@ -53,8 +53,8 @@ public class LdapbyUser {
 	public void init() {
 		Hashtable env = new Hashtable();
 		String LDAP_URL = "ldap://172.17.17.99:389"; // LDAP访问地址
-		String adminName = "example\\user"; // 注意用户名的写法：domain\User或
-		String adminPassword = "Summer2016"; // 密码
+		String adminName = "user@domain"; // 注意用户名的写法：domain\User或
+		String adminPassword = "password"; // 密码
 		env.put(Context.INITIAL_CONTEXT_FACTORY,
 				"com.sun.jndi.ldap.LdapCtxFactory");
 		env.put(Context.PROVIDER_URL, LDAP_URL);

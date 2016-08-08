@@ -373,7 +373,7 @@ public class HttpClientLoginTest {
 		HttpResponse response = client.execute(post);// 提交POST请求
 		HttpEntity result = response.getEntity();// 拿到返回的HttpResponse的"实体"
 		String content = EntityUtils.toString(result);
-		; // 用httpcore.jar提供的工具类将"实体"转化为字符串打印到控制台
+		// 用httpcore.jar提供的工具类将"实体"转化为字符串打印到控制台
 		System.out.println(content);
 
 		String memberpage = "http://i.zhaopin.com/resume/userinfo/add?type=0&iurl=&nname=";
